@@ -1,34 +1,45 @@
 import signal
 import subprocess
 import Adafruit_BBIO.GPIO as GPIO
+import Adafruit_BBIO.PWM as PWM
 import time
 import datetime
 import os
-from Adafruit_LED_Backpack import SevenSegment
+import sqlite3
+
+db = sqlite3.connect('baza.db')
+cursor = db.cursor()
+cursor.execute('CREATE TABLE IF NOT EXISTS alarmy(id INT PRIMARY KEY,user TEXT, godzina INT, minuty INT);')
 
 # Setup
 ampm = 0  # AM/PM Flag
 alarm = 0  # Alarm Flag
 alarm_hour = 0
 alarm_minute = 0
-segment = SevenSegment.SevenSegment(address=0x70, busnum=2)  # Set up Seven Segment on corrent Bus
-segment.begin()
 proc = None  # Setup Proc for sound playing
 
-buttonSnooze = "P9_21"  # InitializeButtons
-buttonSetAlarm = "P9_22"
-buttonHour = "P9_23"
-buttonMinute = "P9_24"
-buttonAlarmToggle = "P9_25"
+button1 = "P8_08"  # InitializeButtons
+button2 = "P8_10"
+button3 = "P8_12"
+button4 = "P8_16"
+
+led1 = "P8_07"
+led2 = "P8_09"
+led3 = "P8_11"
+led4 = "P8_15"
+
 
 LEDalarmOnOff = "P9_26"  # Initialize LEDs
 LEDampm = "P9_27"
 
-GPIO.setup(buttonSnooze, GPIO.IN)  # Set correct functions for buttons and LEDs
-GPIO.setup(buttonSetAlarm, GPIO.IN)
-GPIO.setup(buttonHour, GPIO.IN)
-GPIO.setup(buttonMinute, GPIO.IN)
-GPIO.setup(buttonAlarmToggle, GPIO.IN)
+GPIO.setup(button1, GPIO.IN)  # Set correct functions for buttons and LEDs
+GPIO.setup(button2, GPIO.IN)
+GPIO.setup(button3, GPIO.IN)
+GPIO.setup(button4, GPIO.IN)
+GPIO.setup(led1, GPIO.OUT)  # Set correct functions for buttons and LEDs
+GPIO.setup(led2, GPIO.OUT)
+GPIO.setup(led3, GPIO.OUT)
+GPIO.setup(led4, GPIO.OUT)
 GPIO.setup(LEDalarmOnOff, GPIO.OUT)
 GPIO.setup(LEDampm, GPIO.OUT)
 
@@ -61,13 +72,13 @@ def update():  # Main method to update Seven Segment Display
 
         # Showing Alarm or setting time
         if GPIO.input("P9_22"):
-            set_7seg(alarm_hour_ampm, alarm_minute)
+            #set_7seg(alarm_hour_ampm, alarm_minute)
             if alarm_hour < 12:
                 ampm = 0
             else:
                 ampm = 1
         else:
-            set_7seg(hour, minute)
+            #set_7seg(hour, minute)
             if datetime_hour < 12:
                 ampm = 0
             else:
@@ -78,14 +89,18 @@ def update():  # Main method to update Seven Segment Display
 def alarm_on():
     global proc
     # Running cvlc from console for youtube.  Enter desired youtube link here.
-    proc = subprocess.Popen(['cvlc', '--no-video', 'https://www.youtube.com/watch?v=nPRHumwZfk4'])
+    PWM.start("P8_13", 25, 1000)
+    
     return 0
 
 
 def alarm_off(channel):
     # Killing cvlc to turn off alarm
     global proc
-    proc.send_signal(signal.SIGINT)
+    #proc.send_signal(signal.SIGINT)
+    PWM.stop("P8_13")
+    PWM.cleanup()
+    
     return 0
 
 
@@ -118,7 +133,7 @@ def set_alarm_minute(channel):
 
 
 # Write to Seven Segment
-def set_7seg(hour, minute):
+"""def set_7seg(hour, minute):
     segment.clear()
     # Set hours
     segment.set_digit(0, int(hour / 10))
@@ -134,14 +149,14 @@ def set_7seg(hour, minute):
 
     # Wait a quarter second
     time.sleep(0.25)
-    return 0
+    return 0"""
 
 
 # GPIO Events for button presses
-GPIO.add_event_detect(buttonSnooze, GPIO.FALLING, callback=alarm_off, bouncetime=200)
-GPIO.add_event_detect(buttonHour, GPIO.FALLING, callback=set_alarm_hour, bouncetime=200)
-GPIO.add_event_detect(buttonMinute, GPIO.FALLING, callback=set_alarm_minute, bouncetime=200)
-GPIO.add_event_detect(buttonAlarmToggle, GPIO.FALLING, callback=alarm_toggle, bouncetime=200)
+GPIO.add_event_detect(button1, GPIO.FALLING, callback=alarm_off, bouncetime=200)
+GPIO.add_event_detect(button2, GPIO.FALLING, callback=set_alarm_hour, bouncetime=200)
+GPIO.add_event_detect(button3, GPIO.FALLING, callback=set_alarm_minute, bouncetime=200)
+GPIO.add_event_detect(button4, GPIO.FALLING, callback=alarm_toggle, bouncetime=200)
 
 # Call the main function
 update()
