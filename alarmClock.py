@@ -98,11 +98,54 @@ def alarm_off(channel):
     # Killing cvlc to turn off alarm
     global proc
     #proc.send_signal(signal.SIGINT)
+    for i in range(5):
+    rand=random.randrange(1,5,1)
+    button = 0
+    if random==1:
+        GPIO.output("P8_7", GPIO.HIGH)
+        while button==0:
+            button=GPIO.input("P8_8")
+        while button==1:
+            button=GPIO.input("P8_8")
+        GPIO.output("P8_7", GPIO.LOW)
+    elif random==2:
+        GPIO.output("P8_9", GPIO.HIGH)
+        while button==0:
+            button=GPIO.input("P8_10")
+        while button==1:
+            button=GPIO.input("P8_10")
+        GPIO.output("P8_9", GPIO.LOW)
+    elif random == 3:
+        GPIO.output("P8_11", GPIO.HIGH)
+        while button==0:
+            button=GPIO.input("P8_12")
+        while button==1:
+            button=GPIO.input("P8_12")
+        GPIO.output("P8_11", GPIO.LOW)
+    elif random==4:
+        GPIO.output("P8_15", GPIO.HIGH)
+        while button==0:
+            button=GPIO.input("P8_16")
+        while button==1:
+            button=GPIO.input("P8_16")
+        GPIO.output("P8_15", GPIO.LOW)
     PWM.stop("P8_13")
     PWM.cleanup()
     
     return 0
 
+def add_alarm(int godzina, int minuta):
+    cursor.execute('SELECT MAX(id) FROM alarmy;')
+    id_val = cursor.fetchall()
+    id_val = id_val + 1
+    global user
+    cursor.execute('INSERT INTO alarmy VALUES(?,?,?,?);',(id_val,user, godzina, minuta))
+
+def set_alarm(int id_val):
+    cursor.execute("SELECT godzina, minuty FROM alarmy WHERE id=?;", (id_val))
+    values = cursor.fetchall()
+    #set alarm with values here
+    #TODO
 
 # Turn Alarm on or off
 def alarm_toggle(channel):
