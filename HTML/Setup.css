@@ -1,0 +1,41 @@
+body {
+	background-color: rgb(220,220,220);
+	font-family: Arial, Verdana, sans-serif;}
+p {
+	font-size: 150%;
+	text-align: right;
+	padding-right: 20px;
+	color: rgb(139,137,137);}
+h1 {
+	font-size: 1250%;
+	text-align: center;}
+h2 {
+	font-size:250%;
+	text-align: center;}
+a {
+	color: black;
+	text-decoration: none;
+	color: rgb(139,137,137);}
+form {
+	text-align: center;
+	padding-top: 15%;}
+fieldset {
+	background-color: rgb(245,245,245);
+	padding: 5px;}
+input[type="submit"] {
+	font-size: 250%;
+	background-color: rgb(139,137,137);
+	color: white;
+	border-radius: 5px;}
+input[type="text"] {
+	font-size: 100%;}
+label {
+	font-size: 250%;
+	padding-bottom: 20px;}
+legend {
+	font-size:250%;
+	background-color: rgb(139,137,137);
+	color: white;
+	border-radius: 5px;
+	padding-right: 5px;
+	padding-left: 5px;}
