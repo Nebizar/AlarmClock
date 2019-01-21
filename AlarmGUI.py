@@ -8,21 +8,43 @@ from flask import Flask, flash, redirect, render_template, request, session, abo
 import os
  
 app = Flask(__name__)
+
  
 @app.route('/')
 def home():
+    global user
     if not session.get('logged_in'):
-        return render_template('login.html')
+        return render_template('newLogin.html')
     else:
-        return "Hello Boss!"
+        return render_template('Main.html', username=user)
  
 @app.route('/login', methods=['POST'])
 def do_admin_login():
-    if request.form['password'] == 'password' and request.form['username'] == 'admin':
+    global user
+    #session['logged_in'] = False
+    if request.form['username'] == 'admin':
         session['logged_in'] = True
+        user = request.form['username']
     else:
         flash('wrong password!')
     return home()
+
+"""@app.route('/main/<string:name>/')
+def mainView(name):
+    return render_template('Main.html',name=name)#</string:name>
+    """
+@app.route('/toset')
+def passSet():
+    return render_template('Set.html')
+    
+
+@app.route('/set', methods=['POST'])
+def setAlarm():
+    print(request.form['hours'])
+    print(type(request.form['hours']))
+    print(request.form['minutes'])
+    return home()
+    
 
 @app.route("/logout")
 def logout():
