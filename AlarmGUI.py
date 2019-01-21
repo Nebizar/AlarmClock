@@ -29,10 +29,6 @@ def do_admin_login():
         flash('wrong password!')
     return home()
 
-"""@app.route('/main/<string:name>/')
-def mainView(name):
-    return render_template('Main.html',name=name)#</string:name>
-    """
 @app.route('/toset')
 def passSet():
     return render_template('Set.html')
