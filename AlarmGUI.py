@@ -22,11 +22,11 @@ def home():
 def do_admin_login():
     global user
     #session['logged_in'] = False
-    if request.form['username'] == 'admin':
+    if request.form['username']:
         session['logged_in'] = True
         user = request.form['username']
     else:
-        flash('wrong password!')
+        flash('no user!')
     return home()
 
 @app.route('/toset')
@@ -36,9 +36,23 @@ def passSet():
 
 @app.route('/set', methods=['POST'])
 def setAlarm():
-    print(request.form['hours'])
-    print(type(request.form['hours']))
-    print(request.form['minutes'])
+    hour = request.form['hours']
+    minute = request.form['minutes']
+    if hour and minute:
+        hour = int(hour)
+        minute = int(minute)
+        """print(hour)
+        print(type(hour))
+        print(minute)"""
+        if hour > 0 and hour < 24 and minute > 0 and minute < 60:
+            print(hour)
+            print(type(hour))
+            print(minute)
+            #set alarm time and add to database here TODO
+        else:
+            flash('wrong time format!')
+    else:
+        flash('no data detected!')
     return home()
     
 
