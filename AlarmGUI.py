@@ -6,7 +6,12 @@ Created on Thu Jan  3 13:45:24 2019
 """
 from flask import Flask, flash, redirect, render_template, request, session, abort
 import os
- 
+import sqlite3
+
+db = sqlite3.connect('baza.db')
+cursor = db.cursor()
+cursor.execute('CREATE TABLE IF NOT EXISTS alarmy(id INT PRIMARY KEY,user TEXT, godzina INT, minuty INT);')
+
 app = Flask(__name__)
 
  
@@ -36,6 +41,7 @@ def passSet():
 
 @app.route('/set', methods=['POST'])
 def setAlarm():
+    global user
     hour = request.form['hours']
     minute = request.form['minutes']
     if hour and minute:
@@ -48,6 +54,10 @@ def setAlarm():
             print(hour)
             print(type(hour))
             print(minute)
+            cursor.execute('SELECT MAX(id) FROM alarmy;')
+            id_val = cursor.fetchall()
+            id_val = id_val + 1
+            cursor.execute('INSERT INTO alarmy VALUES(?,?,?,?);',(id_val,user, hour, minute))
             #set alarm time and add to database here TODO
         else:
             flash('wrong time format!')
