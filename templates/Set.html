@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <hml>
 	<head>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
 		<link href="/static/Setup.css" type="text/css" rel="stylesheet" />
 		<title>Alarm clock</title>
 	</head>
@@ -17,5 +19,81 @@
 				<br />
 			</fieldset>
 		</form>
+
+		<div id="myAlarms">
+			
+		</div>
 	</body>
+
+
+
+	<script>
+		$(document).ready(function(){
+			$.get( "/getAlarms", function( data ) {
+				var str = data;
+				var alarms = str.split(";");
+
+				alarms.forEach(function(alarm){
+					var info = alarm.split("|");
+					var newAlarm;
+					if(info[2] == 0){
+						newAlarm = '<div id="alarm' + info[0] + '"class="alarm"><p class="hour">' + info[1] +'</p><div class="operations"><p class="activate" onclick="activateAlarm(this)">Włącz budzik</p><p class="delete" onclick="deleteAlarm(this)">Usuń</p></div></div>';
+					}else{
+						newAlarm = '<div id="alarm' + info[0] + '"class="alarm"><p class="hour">' + info[1] +'</p><div class="operations"><p class="disactivate" onclick="disactivateAlarm(this)">Wyłącz budzik</p><p class="delete" onclick="deleteAlarm(this)">Usuń</p></div></div>';
+					}
+					
+					
+					$('#myAlarms').append(newAlarm);
+
+				})
+			});
+		})
+
+
+		function activateAlarm(e){
+			var alarm = $(e).closest('.alarm');
+			var alarmID = alarm.attr("id");
+			alarmID = alarmID.replace("alarm", "");
+
+			$.get( "/activateAlarm", { alarmID: alarmID } )
+				.done(function( data ) {
+					if(data == "ok"){
+						var activateField = alarm.find('.activate');
+						activateField.attr('class', 'disactivate').attr('onclick', 'disactivateAlarm(this)').html('Wyłącz budzik');
+					}else{
+						alert("Nie udało się włączyć budzika");
+					}
+			});
+		}
+
+		function disactivateAlarm(e){
+			var alarm = $(e).closest('.alarm');
+			var alarmID = alarm.attr("id");
+			alarmID = alarmID.replace("alarm", "");
+
+			$.get( "/disactivateAlarm", { alarmID: alarmID } )
+				.done(function( data ) {
+					if(data == "ok"){
+						var poleDis = alarm.find('.disactivate').attr('class', 'activate').attr('onclick', 'activateAlarm(this)').html('Włącz budzik');
+					}else{
+						alert("Nie udało się wyłączyć budzika");
+					}
+			});
+		}
+
+		function deleteAlarm(e){
+			var alarm = $(e).closest('.alarm');
+			var alarmID = alarm.attr("id");
+			alarmID = alarmID.replace("alarm", "");
+
+			$.get( "/deleteAlarm", { alarmID: alarmID } )
+				.done(function( data ) {
+					if(data == "ok"){
+						alarm.remove();
+					}else{
+						alert("Nie udało się usunąć budzika");
+					}
+			});
+		}
+	</script>
 </html>		

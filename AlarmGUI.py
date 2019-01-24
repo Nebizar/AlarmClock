@@ -9,10 +9,40 @@ import os
 import sqlite3
 
 db = sqlite3.connect('baza.db')
-cursor = db.cursor()
-cursor.execute('CREATE TABLE IF NOT EXISTS alarmy(id INT PRIMARY KEY,user TEXT, godzina INT, minuty INT);')
+#cursor = db.cursor()
+#cursor.execute('CREATE TABLE IF NOT EXISTS alarmy(id INT PRIMARY KEY,user TEXT, godzina INT, minuty INT);')
 
 app = Flask(__name__)
+
+
+#Tutaj musicie zwrócić alarmy dla użytkownika w formacie id|hour|active;
+#Tylko dla aktywnego użytkownika
+#ostatni alarm bez średnika !!
+@app.route("/getAlarms")
+def getAlarms():
+    return "1|12.40|1;2|13.30|0;3|14.30|0;4|15.30|0;5|15.20|0;6|16.30|0;7|17.30|0"
+
+#usuwanie alarmu, na wejściu dostajecie jego id, jak się powiedzie zwracacie "ok", jak nie to "false";
+@app.route('/deleteAlarm', methods=['GET'])
+def drop_alarm():
+    alarmID = request.args.get('alarmID')
+    print(alarmID)
+    return "ok"
+
+
+#też zwracacie ok jak się uda
+@app.route('/disactivateAlarm', methods=['GET'])
+def disactivate_alarm():
+    alarmID = request.args.get('alarmID')
+    print(alarmID)
+    return "ok"
+    
+#też zwracacie ok jak się uda
+@app.route('/activateAlarm', methods=['GET'])
+def activate_alarm():
+    alarmID = request.args.get('alarmID')
+    print(alarmID)
+    return "ok"
 
  
 @app.route('/')
@@ -34,6 +64,11 @@ def do_admin_login():
         flash('no user!')
     return home()
 
+
+
+
+
+
 @app.route('/toset')
 def passSet():
     return render_template('Set.html')
@@ -54,10 +89,10 @@ def setAlarm():
             print(hour)
             print(type(hour))
             print(minute)
-            cursor.execute('SELECT MAX(id) FROM alarmy;')
-            id_val = cursor.fetchall()
-            id_val = id_val + 1
-            cursor.execute('INSERT INTO alarmy VALUES(?,?,?,?);',(id_val,user, hour, minute))
+            #cursor.execute('SELECT MAX(id) FROM alarmy;')
+            #id_val = cursor.fetchall()
+            #id_val = id_val + 1
+            #cursor.execute('INSERT INTO alarmy VALUES(?,?,?,?);',(id_val,user, hour, minute))
             #set alarm time and add to database here TODO
         else:
             flash('wrong time format!')
@@ -74,3 +109,6 @@ def logout():
 if __name__ == "__main__":
     app.secret_key = os.urandom(12)
     app.run(debug=True,host='0.0.0.0', port=4000)
+
+
+

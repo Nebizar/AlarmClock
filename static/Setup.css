@@ -18,7 +18,8 @@ a {
 	color: rgb(139,137,137);}
 form {
 	text-align: center;
-	padding-top: 15%;}
+	/*padding-top: 15%;*/
+}
 fieldset {
 	background-color: rgb(245,245,245);
 	padding: 5px;}
@@ -39,3 +40,35 @@ legend {
 	border-radius: 5px;
 	padding-right: 5px;
 	padding-left: 5px;}
+
+
+#myAlarms{
+	width: 60%;
+	margin-left: 20%;
+	margin-top: 60px;
+	
+}
+
+#myAlarms .alarm{
+	margin-top: 30px;
+	float: left;
+	width: 100%;
+}
+
+#myAlarms p{
+	text-align: left;
+	float: left;
+	width: 50%;
+	margin: 0px;
+	padding: 0px;
+}
+
+#myAlarms .operations p{
+	text-align: right;
+	width: 25%;
+	cursor: pointer;
+}
+
+#myAlarms .operations p:hover{
+	opacity: 0.8;
+}
