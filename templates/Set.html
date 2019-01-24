@@ -58,6 +58,8 @@
 			$.get( "/activateAlarm", { alarmID: alarmID } )
 				.done(function( data ) {
 					if(data == "ok"){
+						$('.operations .disactivate').attr('class', 'activate').attr('onclick', 'activateAlarm(this)').html('Włącz budzik');
+
 						var activateField = alarm.find('.activate');
 						activateField.attr('class', 'disactivate').attr('onclick', 'disactivateAlarm(this)').html('Wyłącz budzik');
 					}else{
