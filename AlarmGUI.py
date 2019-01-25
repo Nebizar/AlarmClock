@@ -67,7 +67,15 @@ def disactivate_alarm():
 @app.route('/activateAlarm', methods=['GET'])
 def activate_alarm():
     alarmID = request.args.get('alarmID')
-    print(alarmID)
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute('SELECT * FROM alarmy WHERE id =  ?;', (alarmID,))
+    alarm = cursor.fetchall()
+    hour = alarm[0][2]
+    minute = alarm[0][3]
+    print(hour)
+    print(minute)
+    #activate alarm on Beagle TODO
     return "ok"
 
  
