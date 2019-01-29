@@ -12,6 +12,8 @@ from time import sleep
 
 DATABASE = 'baza.db'
 alarm_thread = None
+time1 = 10
+time2 = 10
 
 def get_db():
     db = getattr(g, '_database', None)
@@ -103,6 +105,8 @@ def activate_alarm():
 @app.route('/')
 def home():
     global user
+    global time1
+    global time2
     db = get_db()
     cursor = db.cursor()
     cursor.execute('CREATE TABLE IF NOT EXISTS alarmy(id INT PRIMARY KEY,user TEXT, godzina INT, minuty INT);')
@@ -122,12 +126,16 @@ def home():
     if not session.get('logged_in'):
         return render_template('newLogin.html')
     else:
-        return render_template('Main.html', username=user, hour = 12, minute = 12)
+        return render_template('Main.html', username=user, time = str(time1) + ":" + str(time2))
     
-@app.route('/main')
-def time_checker():
-    sleep(30)
-    render_template('Main.html', username=user, hour = 13, minute = 13)
+@app.route('/refresh')
+def refresh():
+    global time1
+    global time2
+    time1 = time1 + 1
+    time2 = time2 + 1
+    return str(time1) + ":" + str(time2)
+    #return render_template('Main.html', username=user, hour = time1, minute = time2)
  
 @app.route('/login', methods=['POST'])
 def do_admin_login():
