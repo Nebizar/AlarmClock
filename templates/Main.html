@@ -15,11 +15,11 @@
 	
 	<script>
         $(document).ready(function() {
-            setInterval(ajaxd,5000); // call every 10 seconds
+            setInterval(ajaxd,5000); // call every 5 seconds
         });
 
         function ajaxd() { 
-          $("#timeField").load("/main");
+          $("#timeField").load("/refresh");
         }
 </script>
 
